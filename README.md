@@ -1,2 +1,2 @@
 # MyShell
-A customized unix shell
+This is the course project for c/unix programming.
