@@ -26,7 +26,7 @@ bool Find(const char *dst, const char *dir)
         if (S_ISDIR(statbuf.st_mode)) {
             continue;
         }
-        if (strcmp(dst, entry->d_name)) {
+        if (strcmp(dst, entry->d_name) == 0) {
             return true;
         }
     }
