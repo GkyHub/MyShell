@@ -2,42 +2,87 @@
 #include "token.h"
 #include "common.h"
 
-// free the variables in a token object.
-void Free(token *t)
+// generate a token_list from a line
+// should be freed after usage
+token_list ParseStr(const str_t line)
 {
-    free(t->cmd);
-    free(t->pos);
-    return;
-}
+    uint32_t i = 0;
+    uint32_t len = strlen(line);
+    uint32_t *sizeBuf = malloc(len * sizeof(uint32_t));
+    uint32_t size = 0;
+    uint32_t tokenId = 0;
+    uint32_t addr = 0;
 
-// generate a token object from a string command.
-// do not use this function for a existing token.
-void NewToken(token *t, str_t cmd)
-{
-    uint32_t i, j;
-    uint32_t *posBuf;
-    uint32_t len = strlen(cmd) + 1;
+    token_list tl;
 
-    t->cmd = malloc(len * sizeof(char));
-    t->num = 1;
-
-    posBuf = malloc((len / 2 + 1) * sizeof(uint32_t));
-    posBuf[0] = 0;
-
-    // find all the tokens
-    // use the string to buffer the positions
-    for (i = 0; i < len; i++) {
-        t->cmd[i] = cmd[i];
-        if (cmd[i] == ' ' || cmd[i] == 0) {
-            posBuf[j] = i + 1;
-            j++;
+    // count the number and size of tokens
+    while(line[i]) {
+        if (line[i] == ' ') {
+            size++;
+            sizeBuf[tokenId] = size;
+            tokenId++;
+            size = 0
+        }
+        else {
+            size++;
         }
     }
+    size++;
+    sizeBuf[tokenId] = size;
+    tokenId++;
 
-    memcpy(t->pos, posBuf, j * sizeof(uint32_t));
-    t->num = j - 1;
+    // build the list
+    tl.argc = tokenId;
+    tl.argv = malloc(sizeof(str_t) * tl.argc);
+    for (i = 0; i < tl->argc; i++) {
+        // malloc the space for a token
+        tl.argc[i] = malloc(sizeBuf[i] * sizeof(char));
+        // get the token
+        memcpy(tl.argc[i], line + addr, sizeBuf[i] * sizeof(char));
+        // move to the next token
+        addr += sizeBuf[i];
+        // set the end of the token
+        tl.argc[i][sizeBuf[i] - 1] = 0;
+    }
+
+    free(sizeBuf);
+
+    return tl;
+}
+
+// free the list from token
+void FreeTokenList(token_list *tl)
+{
+    for (int i = 0; i < tl->argc; i++) {
+        free(argv[i]);
+    }
     return;
 }
 
-// execute a token.
-void Execute(token *t);
+// Initiate a task
+void InitTask(task *t)
+{
+    t->io_stdin = STDIN_FILENO;
+    t->io_stdout = STDOUT_FILENO;
+    t->io_stderr = STDERR_FILENO;
+    arg = NULL_STR;
+    return;
+}
+
+// get a list of task from the token list
+task *ParseTokenList(token_list *tl, int &tn)
+{
+    for (int i = 0; i < tl->argc; i++) {
+        // redirect the output
+        if (strcmp(tl->argv[i], ">")) {
+
+        }
+    }
+}
+
+// free a task
+void FreeTask(task *t)
+{
+    free(t->arg);
+    return;
+}

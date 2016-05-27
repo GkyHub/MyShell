@@ -1,4 +1,7 @@
 #include <stdio.h>
+#include <unistd.h>
+#include <string.h>
+#include <dirent.h>
 
 int main()
 {
@@ -6,13 +9,26 @@ int main()
     return 0;
 }
 
-int RecvArg(int fd, char *buffer, int *pos)
+bool Find(const char *dst, const char *dir)
 {
-    char c;
-    int c_pos = 0;
-    int t_num = 0;
+    DIR *dp;
+    struct dirent *entry;
 
-    while(read(fd, &c, 1) > 0) {
-        if ()
+    // change to the directory
+    if ((dp = opendir(dir)) == NULL) {
+        printf("cannot open directory: %s\n", dir);
+        return false;
     }
+
+    while((entry = readdir(dp)) != NULL) {
+        lstat(entry->d_name, &statbuf);
+        // igore directory
+        if (S_ISDIR(statbuf.st_mode)) {
+            continue;
+        }
+        if (strcmp(dst, entry->d_name)) {
+            return true;
+        }
+    }
+    return false;
 }
