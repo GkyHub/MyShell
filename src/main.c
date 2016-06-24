@@ -1,13 +1,19 @@
-#include <stdio.h>
-#include <unistd.h>
-#include <string.h>
-#include <dirent.h>
+#include "token.h"
+#include "common.h"
+#include <ncurses.h>
 #include <readline/readline.h>
 #include <readline/history.h>
+
 
 int main()
 {
     char* input, shell_prompt[100];
+
+    InitTaskList();
+
+    printf("\n==========================\n");
+    printf("YAUSH initialize finish.");
+    printf("\n==========================\n");
 
     while(1) {
         // Create prompt string from user name and current working directory.
@@ -21,11 +27,15 @@ int main()
             break;
         }
 
+        if (strlen(input) == 0) {
+            continue;
+        }
+
         // Add input to history.
         add_history(input);
 
         // exit instruction.
-        if (!strcmp(input, "exit")) {
+        if (strcmp(input, "exit") == 0) {
             break;
         }
 
@@ -36,28 +46,4 @@ int main()
         free(input);
     }
     return 0;
-}
-
-bool Find(const char *dst, const char *dir)
-{
-    DIR *dp;
-    struct dirent *entry;
-
-    // change to the directory
-    if ((dp = opendir(dir)) == NULL) {
-        printf("cannot open directory: %s\n", dir);
-        return false;
-    }
-
-    while((entry = readdir(dp)) != NULL) {
-        lstat(entry->d_name, &statbuf);
-        // igore directory
-        if (S_ISDIR(statbuf.st_mode)) {
-            continue;
-        }
-        if (strcmp(dst, entry->d_name) == 0) {
-            return true;
-        }
-    }
-    return false;
 }

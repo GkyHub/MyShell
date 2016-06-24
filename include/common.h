@@ -1,12 +1,16 @@
 #ifndef _COMMON_H_
 #define _COMMON_H_
 
-// data type definition.
-typedef long long   int64_t;
-typedef int         int32_t;
-typedef short       int16_t;
-typedef char        int8_t;
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/stat.h>
+#include <dirent.h>
+#include <fcntl.h>
+#include <string.h>
+#include <sys/wait.h>
 
+// data type definition.
 typedef unsigned long long  uint64_t;
 typedef unsigned int        uint32_t;
 typedef unsigned short      uint16_t;
@@ -16,12 +20,18 @@ typedef unsigned char       bool;
 typedef char * str_t;
 
 // constant definition.
-#define NULL_STR 0;
+#define NULL_STR 0
+#define TRUE     1
+#define FALSE    0
 
 // standard binary file location.
-#define SYS_BIN     "/usr/bin/"
-#define LOCAL_BIN   "/usr/local/bin/"
-#define GAME_BIN    "/usr/games"
+#define BIN_FOLDER_NUM 5
+extern const str_t g_binFolder[BIN_FOLDER_NUM];
+
+// built in function name list
+#define BUILT_IN_NUM 1
+extern const str_t g_builtInList[BUILT_IN_NUM];
+extern int (*g_builtInFunc[BUILT_IN_NUM])(str_t argv[]);
 
 // special mark for command execution.
 #define M_RED_STD_OUT ">"
@@ -40,8 +50,8 @@ typedef char * str_t;
 
 // function definition.
 // standard error output
-#define ERR(INFO) print(2, INFO)
+#define ERR(INFO) fprintf(STDERR_FILENO, INFO)
 // judge if an argument is a certain kind
-#define ARG_IS(ARG, X) ((strcmp((ARG), (K))) == 0)
+#define ARG_IS(ARG, X) ((strcmp(ARG, X)) == 0)
 
 #endif
